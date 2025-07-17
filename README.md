@@ -10,7 +10,7 @@ Welcome to my collection of 8086 assembly programs! This repository contains the
 
 ## 📁 Programs Collection
 
-### 🔢 **ex1.asm** - Smart Number Processor
+### 🔢 **GetInput_SumEvens.asm** - Smart Number Processor
 - **What it does:** Gets 10 numbers from user (0-255 range)
 - **Cool features:** 
   - Input validation (rejects invalid numbers)
@@ -19,7 +19,7 @@ Welcome to my collection of 8086 assembly programs! This repository contains the
   - Calculates sum of even numbers only
 - **Techniques:** String-to-number conversion, array manipulation, bit operations
 
-### 🔤 **ex2.asm** - Character Transformer
+### 🔤 **Char_Process.asm** - Character Transformer
 - **What it does:** Processes up to 20 characters with multiple transformations
 - **Magic features:**
   - Flips case: `Hello` → `hELLO`
@@ -37,7 +37,7 @@ Welcome to my collection of 8086 assembly programs! This repository contains the
   - Safely restores original handler
 - **Techniques:** Interrupt vector manipulation, system-level programming, error handling
 
-### 🔄 **ex4.asm & Reverse_String.asm** - String Reversal Masters
+### 🔄 **Reverse_String.asm & Reverse_String.asm** - String Reversal Masters
 - **What it does:** Reverses any input string using palindrome logic
 - **Clever approach:**
   - Two-pointer technique (start ↔ end)
@@ -60,44 +60,12 @@ Welcome to my collection of 8086 assembly programs! This repository contains the
 - 📊 **Data Structures:** Arrays, string buffers
 - 🛡️ **Error Handling:** Input validation, interrupt safety
 
-### **8086 Features Used:**
-- **Registers:** AX, BX, CX, DX, SI, DI, BP
-- **Memory Models:** Small model (.model small)
-- **Interrupts:** INT 21h (DOS services), INT 0 (divide by zero)
-- **Addressing:** Direct, indirect, indexed addressing modes
-- **Instructions:** MOV, CMP, JMP, CALL, PUSH/POP, DIV, TEST
-
 ## 🚀 How to Run
 
 ### **Requirements:**
 - 8086 Assembler (TASM, MASM, or NASM)
 - DOS environment or DOSBox emulator
 - Text editor or IDE
-
-### **Compilation & Execution:**
-```bash
-# Using TASM (Turbo Assembler)
-tasm ex1.asm
-tlink ex1.obj
-ex1.exe
-
-# Using MASM (Microsoft Assembler)
-masm ex2.asm
-link ex2.obj
-ex2.exe
-
-# Example for all programs:
-tasm ex3.asm && tlink ex3.obj && ex3.exe
-tasm ex4.asm && tlink ex4.obj && ex4.exe
-tasm Reverse_String.asm && tlink Reverse_String.obj && Reverse_String.exe
-tasm Char_Process.asm && tlink Char_Process.obj && Char_Process.exe
-```
-
-### **DOSBox Setup:**
-1. Install DOSBox
-2. Mount your directory: `mount c: d:\Microprocessor_final`
-3. Switch to C: drive: `c:`
-4. Compile and run as above
 
 ## 🎨 Program Features
 
@@ -108,30 +76,7 @@ tasm Char_Process.asm && tlink Char_Process.obj && Char_Process.exe
 | ex3 | Any division | Interrupt handling | Custom error message |
 | ex4 | Text string | Two-pointer reversal | Reversed string |
 
-## 🧪 Example Runs
 
-### **ex2.asm Example:**
-```
-Input:  "Hello123 World!"
-Output: "hELLO wORLD"
-        Sum: 6 (1+2+3)
-        Other chars: 1 (the "!")
-```
-
-### **ex4.asm Example:**
-```
-Input:  "Assembly"
-Output: "ylbmessA"
-```
-
-## 💡 Learning Outcomes
-
-This project demonstrates mastery of:
-- **Low-level programming concepts**
-- **Memory management and pointers**
-- **System-level interrupt handling**
-- **Algorithm implementation in assembly**
-- **Real-world problem solving with constraints**
 
 ## 🏆 Why This Matters
 

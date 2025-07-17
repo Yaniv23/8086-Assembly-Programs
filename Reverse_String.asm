@@ -1,102 +1,100 @@
-;write an assembly 8086 code who get an input from user and print it in reverse order
-;use the logic of polindrome
-;use 2 pointer who point at the begining and the end of the string
-;change between the 2 pointers and print the string
-
 ;========================================================
 ; Program: Reverse String on 8086
+;
+; Description:
+;   - Get string input (max 20 characters)
+;   - Use two-pointer "palindrome logic" to reverse the string
+;   - Swap characters from both ends moving toward center
+;   - Print the reversed string
+;========================================================
 
 .model small
 .stack 100h
+
 .data
     Prompt        db 'Enter a string (max 20 chars):', 13, 10, '$'
     Output_msg    db 'Reversed string:', 13, 10, '$'
     newline       db 13, 10, '$'
-
-    Input_buffer  db 21, 0, 21 dup(0)          ; Input: max 20 chars + CR
-    
+    Input_buffer  db 21, 0, 21 dup(0)           ; Input buffer for DOS (max 20 chars)
 
 .code
 start:
     ; Initialize data segment
-    mov ax, @data
-    mov ds, ax
+    mov     ax, @data
+    mov     ds, ax
 
     ; Prompt user for input
-    mov ah, 09h
-    lea dx, Prompt
-    int 21h
+    mov     ah, 09h
+    lea     dx, Prompt
+    int     21h
 
-    ; Read input string
-    mov ah, 0Ah
-    lea dx, Input_buffer
-    int 21h
+    ; Read input using DOS function 0Ah
+    mov     ah, 0Ah
+    lea     dx, Input_buffer
+    int     21h
 
-    ; Prepare for reversing the string
-    lea si, Input_buffer + 2   ; SI points to the first character of input
-    mov cl, Input_buffer[1]    ; CL = actual length of input string
-    xor ch, ch                 ; Clear CH to make CX = CL
-    cmp cx, 0                  ; Check if string is empty
-    je print_empty             ; If empty, skip reversal
-    
-    ; Set up two pointers for palindrome-style reversal
-    mov bx, si                 ; BX = start pointer (first character)
-    lea di, Input_buffer + 2   ; DI = end pointer 
-    add di, cx                 ; Move DI to point after last character('$')
-    dec di                     ; DI now points to last character
-    
+    ; Load input length and check if empty
+    mov     cl, Input_buffer[1]     ; CL = input length
+    xor     ch, ch                  ; Clear CH → CX = length
+    cmp     cx, 0
+    je      print_empty             ; If empty string, skip reversal
+
+    ; Set pointers for reversal
+    lea     si, Input_buffer + 2    ; SI = start of input
+    mov     bx, si                  ; BX = start pointer
+    lea     di, Input_buffer + 2
+    add     di, cx                  ; DI → one past last char
+    dec     di                      ; DI = end pointer
+
 reverse_loop:
-    ; Check if pointers have crossed (reversal complete)
-    cmp bx, di
-    jae reversal_done          ; If start >= end, we're done
-    
-    ; Swap characters at start and end positions
-    mov al, [bx]              ; Load character from start
-    mov ah, [di]              ; Load character from end
-    mov [bx], ah              ; Store end char at start position
-    mov [di], al              ; Store start char at end position
-    
-    ; Move pointers toward center
-    inc bx                    ; Move start pointer forward
-    dec di                    ; Move end pointer backward
-    jmp reverse_loop          ; Continue swapping
+    cmp     bx, di
+    jae     reversal_done           ; If BX ≥ DI → done
+
+    ; Swap characters at BX and DI
+    mov     al, [bx]                ; Load character from start
+    mov     ah, [di]                ; Load character from end
+    mov     [bx], ah                ; Store end char at start position
+    mov     [di], al                ; Store start char at end position
+
+    inc     bx
+    dec     di
+    jmp     reverse_loop
 
 reversal_done:
-    ; Add string terminator for output
-    lea bx, Input_buffer + 2  ; Point to start of string
-    add bx, cx                ; Move to end of string
-    mov byte ptr [bx], '$'    ; Add string terminator
-    
-    ; Print newline after input
-    mov ah, 09h
-    lea dx, newline
-    int 21h
-    
-    ; Print output message
-    mov ah, 09h
-    lea dx, Output_msg
-    int 21h
-    
+    ; Add string terminator at end
+    lea     bx, Input_buffer + 2
+    add     bx, cx
+    mov     byte ptr [bx], '$'      ; Add DOS string terminator
+
+    ; Print newline
+    mov     ah, 09h
+    lea     dx, newline
+    int     21h
+
+    ; Print output label
+    mov     ah, 09h
+    lea     dx, Output_msg
+    int     21h
+
     ; Print reversed string
-    mov ah, 09h
-    lea dx, Input_buffer + 2  ; Print the modified input buffer
-    int 21h
-    jmp exit_program
+    mov     ah, 09h
+    lea     dx, Input_buffer + 2
+    int     21h
+    jmp     exit_program
 
 print_empty:
-    ; Handle empty string case
-    mov ah, 09h
-    lea dx, Output_msg
-    int 21h
-    
-    mov ah, 09h
-    lea dx, newline
-    int 21h
+    ; Handle empty string input
+    mov     ah, 09h
+    lea     dx, Output_msg
+    int     21h
+
+    mov     ah, 09h
+    lea     dx, newline
+    int     21h
 
 exit_program:
     ; Exit to DOS
-    mov ah, 4Ch
-    int 21h
+    mov     ah, 4Ch
+    int     21h
 
 end start
-    

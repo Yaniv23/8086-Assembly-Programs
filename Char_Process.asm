@@ -1,15 +1,3 @@
-
-;Plan: 1-get 20 chars from user
-;2-check each char
-;3-if char is number add it to a sum and 
-;4-if char is lower case convert to upper case and add to output
-;5-if char is upper case convert to lower case  and add to output 
-;6-if char is not letter or number count it
-;7-print the output string
-;8-print the sum of numbers
-;9-print the count of other chars
-
-; ---------------------------------------------
 ;========================================================
 ; Program: Character Processor on 8086
 ;
@@ -240,7 +228,7 @@ print_other_count:
     ret
 
 ;========================================================
-; Print 16-bit unsigned integer in AX
+; Print integer in AX
 ;========================================================
 print_number:
     push ax

@@ -1,19 +1,19 @@
-; get 10 numbers from user and store them in an array
-;write a function who adds the even numbers in the array
-;to determine if a number is even, use MASK 
-;print the result
-;you have to check the input numbers for validity , if the number is not valid you dont have to add it to the array
-;write me this code for an 8086 processor
+; =============================================
+; Program: Get 10 numbers from user, sum evens
+; Only valid 0–255 inputs are summed
+; Even numbers are detected using a MASK (TEST)
+; =============================================
 
 .model small
 .stack 100h
 
 .data
-    Prompt db 'Enter a number (0-255):',13,10,'$' 
-    output_msg db 'Sum of even numbers:',13,10,'$'
-    Input_buffer db 3, 0, 4 dup(0) ; buffer for input (max 3 digits + enter) 
-    Num_array db 10 dup(0) ; array to store numbers
-    Result db 0 ; variable to store the sum of even numbers
+    Prompt        db 'Enter a number (0-255):', 13, 10, '$'
+    output_msg    db 'Sum of even numbers:', 13, 10, '$'
+    newline       db 13, 10, '$'
+
+    Input_buffer  db 4, 0, 4 dup(0)         ; DOS input buffer
+    Num_array     db 10 dup(0)              ; store up to 10 numbers
 
 .code
 start:
@@ -22,126 +22,169 @@ start:
     mov ds, ax
 
     ; Initialize variables
-    mov cx, 10 ; loop counter for 10 numbers
-    xor bx, bx ; index for Num_array
-    xor si, si ; sum of even numbers
+    mov cx, 10             ; loop counter: 10 numbers
+    xor bx, bx             ; array index
+    xor si, si             ; sum of even numbers
+
 input_loop:
-    ; Prompt user for input
+    ; Prompt user
     mov ah, 09h
     lea dx, Prompt
     int 21h
 
-    ; Read string from user
-    mov ah, 0Ah ; function to read string input
+    ; Read input string
+    mov ah, 0Ah
     lea dx, Input_buffer
     int 21h
-    
-    ; Convert string to number
+
+    ; Convert input string to number in AX
     call string_to_number
-    
-    ; Check if the number is valid (0-255)
+
+    ; Validate number range (0–254)
     cmp ax, 0
-    jl continue ; if less than 0, invalid input    
+    jb not_count
     cmp ax, 255
-    jg continue ; if greater than 255, invalid input
+    jge not_count
 
-    ; Store in AL for even check
-    mov al, al  ; AX already contains the number
-    
-    ;check if the number is even
-    call even_check
-    continue:
-    loop input_loop ; continue loop until 10 numbers are entered
-    
-    ; Print the result
+    ; Check even using bitmask
+    jmp even_check
+
+continue:
+    ; Prepare for next input
+    lea dx, newline
     mov ah, 09h
-    lea dx, output_msg
-    int 21h
-    mov ax, si ; move sum of even numbers to AX
-    call print_number ; call function to print the number in AX
-    ; Exit to DOS 
-    exit_program:
-    mov ah, 4Ch 
     int 21h
 
-; Function to convert string to number
+    loop input_loop        ; repeat until 10 entries
+    jmp done
+
+; ---------------------------------------------
+; Convert ASCII string to number in AX
+; ---------------------------------------------
 string_to_number:
     push bx
     push cx
     push dx
-    
-    xor ax, ax ; result = 0
-    mov cl, Input_buffer[1] ; get actual length of input
+
+    xor ax, ax                     ; result
+    mov cl, Input_buffer[1]        ; input length
     cmp cl, 0
-    je string_done ; if empty input, return 0
-    
-    xor bx, bx ; index = 0
+    je string_done                 ; empty = 0
+
+    xor bx, bx                     ; index
+
 string_loop:
-    mov dl, Input_buffer[bx + 2] ; get character from buffer (skip first 2 bytes)
+    mov dl, Input_buffer[bx + 2]
     cmp dl, '0'
-    jl string_error ; invalid character
+    jl string_error
     cmp dl, '9'
-    jg string_error ; invalid character
-    
-    sub dl, '0' ; convert ASCII to digit
-    
-    ; Multiply current result by 10 and add new digit
-    push dx ; save new digit
+    jg string_error
+
+    sub dl, '0'                    ; ASCII → digit
+
+    push dx
     mov dx, 10
-    mul dx ; ax = ax * 10
-    pop dx ; restore digit
-    add ax, dx ; add new digit to result
-    
+    mul dx                         ; AX *= 10
+    pop dx
+    add ax, dx                     ; AX += digit
+
     inc bx
     dec cl
     jnz string_loop
     jmp string_done
-    
+
 string_error:
-    mov ax, 0FFFFh ; return -1 for error
-    
+    mov ax, 0                      ; invalid → 0
+
 string_done:
     pop dx
     pop cx
     pop bx
     ret
 
-
-    
-    ;add valid number to array
+; ---------------------------------------------
+; Check if AX is even using TEST
+; If even → store in array
+; ---------------------------------------------
 even_check:
-    ;we can also use a regular mask, make a AND instr 
-    ;betwen the number and x"1"  
+    ;we can also use a regular mask, make a AND instr
+    ;betwen the number and x"1"
     ;but here we use a simple check
-    TEST al, 1 ; Make mask to check if even
-    jz add_to_array ; if even, add to array
-    ret ; if odd, return without adding
+    test al, 1
+    jnz not_count                  ; odd → skip
+
 add_to_array:
-    mov Num_array[bx], al ; store the number in the array
-    add si, ax ; si accumulates the sum of even numbers (use ax to avoid issues)
-    inc bx ; increment index for next number
-    ret ; return to input loop
+    mov Num_array[bx], al
+    inc bx
+    jmp continue
+
+not_count:
+    mov Num_array[bx], 0           ; mark as invalid
+    inc bx
+    jmp continue
+
+; ---------------------------------------------
+; Sum the even numbers from Num_array
+; Result in BH
+; ---------------------------------------------
+sum_array:
+    xor bx, bx
+    xor ax, ax
+
+sum_loop:
+    mov al, Num_array[bx]
+    add ah, al
+    inc bx
+    cmp bx, 10
+    jl sum_loop
+
+    mov bh, ah                     ; save sum
+    xor ax, ax
+    ret
+
+; ---------------------------------------------
+; Print the number in BH as decimal
+; ---------------------------------------------
 print_number:
-    ; Function to print the number in AX
-    ; Convert number in AX to string and print it
     push ax
-    mov cx, 0 ; digit counter
-    mov bx, 10 ; divisor for decimal conversion
-    convert_loop:
-        xor dx, dx ; clear DX for division
-        div bx ; divide AX by 10
-        add dl, '0' ; convert remainder to ASCII
-        push dx ; save digit on stack
-        inc cx ; increment digit counter
-        test ax, ax ; check if AX is zero
-        jnz convert_loop ; continue until AX is zero
-        ; Print digits in reverse order
-    print_loop:
-        pop dx ; get digit from stack
-        mov ah, 02h ; function to print character
-        int 21h ; print character
-        loop print_loop ; repeat for all digits
-    pop ax ; restore AX
-    ret ; return from function
+    mov al, bh
+    mov cx, 0
+    mov bx, 10
+    xor ah, ah
+
+convert_loop:
+    xor dx, dx
+    div bx
+    add dl, '0'
+    push dx
+    inc cx
+    test ax, ax
+    jnz convert_loop
+
+print_loop:
+    pop dx
+    mov ah, 02h
+    int 21h
+    loop print_loop
+
+    pop ax
+    ret
+
+; ---------------------------------------------
+; Display done message and print result
+; ---------------------------------------------
+done:
+    call sum_array
+
+    mov ah, 09h
+    lea dx, output_msg
+    int 21h
+
+    call print_number
+
+    ; Exit to DOS
+exit_program:
+    mov ah, 4Ch
+    int 21h
 
 end start

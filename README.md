@@ -28,7 +28,7 @@ Welcome to my collection of 8086 assembly programs! This repository contains the
   - Real-time character analysis
 - **Techniques:** ASCII manipulation, character classification, multi-pass processing
 
-### ⚠️ **ex3.asm** - Division by Zero Handler
+### ⚠️ **Division_by_zero_handler.asm** - Division by Zero Handler
 - **What it does:** Creates a custom interrupt handler for division by zero
 - **Epic features:**
   - Hijacks the interrupt vector table

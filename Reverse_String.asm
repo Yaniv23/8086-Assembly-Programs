@@ -28,7 +28,7 @@ start:
     lea     dx, Prompt
     int     21h
 
-    ; Read input using DOS function 0Ah
+    ; Read input 
     mov     ah, 0Ah
     lea     dx, Input_buffer
     int     21h
@@ -64,7 +64,8 @@ reversal_done:
     ; Add string terminator at end
     lea     bx, Input_buffer + 2
     add     bx, cx
-    mov     byte ptr [bx], '$'      ; Add DOS string terminator
+	mov dl, '$'         ; Put '$' character in DL
+	mov [bx], dl        ; Store it at the end of the string
 
     ; Print newline
     mov     ah, 09h
@@ -78,7 +79,7 @@ reversal_done:
 
     ; Print reversed string
     mov     ah, 09h
-    lea     dx, Input_buffer + 2
+    lea     dx, Input_buffer + 2  ; Start of reversed string
     int     21h
     jmp     exit_program
 

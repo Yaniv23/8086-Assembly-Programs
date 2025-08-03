@@ -46,10 +46,6 @@ Welcome to my collection of 8086 assembly programs! This repository contains the
   - Example: `"hello"` → `"olleh"`
 - **Techniques:** Pointer manipulation, in-place algorithms, string processing
 
-### 🎯 **Additional Utilities**
-- **Char_Process.asm:** Character processing utilities
-- **GetInput_SumEvens.asm:** Input handling and even number operations
-
 ## 🛠️ Technical Highlights
 
 ### **Assembly Mastery Demonstrated:**
@@ -59,13 +55,6 @@ Welcome to my collection of 8086 assembly programs! This repository contains the
 - 🔍 **Algorithm Implementation:** Two-pointer technique, bit masking
 - 📊 **Data Structures:** Arrays, string buffers
 - 🛡️ **Error Handling:** Input validation, interrupt safety
-
-## 🚀 How to Run
-
-### **Requirements:**
-- 8086 Assembler (TASM, MASM, or NASM)
-- DOS environment or DOSBox emulator
-- Text editor or IDE
 
 ## 🎨 Program Features
 

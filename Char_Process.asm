@@ -18,17 +18,6 @@
 ;   hELLO wORD
 ;   numbers sum : 6
 ;   other chars amount: 1
-
-;Plan:
-;1-get 20 chars from user
-;2-check each char
-;3-if char is number add it to a sum and 
-;4-if char is lower case convert to upper case and add to output
-;5-if char is upper case convert to lower case  and add to output 
-;6-if char is not letter or number count it
-;7-print the output string
-;8-print the sum of numbers
-;9-print the count of other chars
 ;========================================================
 
 .model small
@@ -75,36 +64,36 @@ start:
 ; Process each character from Input_buffer
 ;--------------------------------------------------------
 string_loop:
-    mov al, Input_buffer[bx + 2]
+    mov al, Input_buffer[bx + 2] ; Get character from input
 
-    cmp al, ' '
+    cmp al, ' '                  ; Check for space
     je add_space_to_output
 
-    cmp al, '0'
+    cmp al, '0'                  ; Check for digit
     jb other_case
-    cmp al, '9'
+    cmp al, '9'                  ; Check for digit
     jbe add_to_sum
 
-    cmp al, 'A'
+    cmp al, 'A'                  ; Check for uppercase letter
     jb other_case
-    cmp al, 'Z'
+    cmp al, 'Z'                  ; Check for uppercase letter
     jbe convert_to_lower
 
-    cmp al, 'a'
+    cmp al, 'a'                  ; Check for lowercase letter
     jb other_case
-    cmp al, 'z'
+    cmp al, 'z'                  ; Check for lowercase letter
     jbe convert_to_upper
 
-    jmp other_case
+    jmp other_case               ; Not a letter or digit, handle as other
 
 continue_processing:
-    inc bx
-    dec cl
+    inc bx                       ; Move to next character
+    dec cl                       ; Decrement input length
     jnz string_loop
 
     ; Terminate output string with $
-    push bx
-    mov bx, bp
+    push bx                  
+    mov bx, bp                   ; Store output index
     mov Output_buffer[bx], '$'
     pop bx
 
@@ -127,14 +116,14 @@ done_processing:
 add_to_sum:
     sub al, '0'
     xor ah, ah
-    add si, ax
+    add si, ax                 
     jmp continue_processing
 
 ;--------------------------------------------------------
 ; Convert lowercase → uppercase
 ;--------------------------------------------------------
 convert_to_upper:
-    sub al, 32
+    sub al, 32             
     call store_output
     jmp continue_processing
 
@@ -167,7 +156,7 @@ store_output:
     push bx
     mov bx, bp
     mov Output_buffer[bx], al
-    inc bp
+    inc bp          ; Increment output index
     pop bx
     ret
 

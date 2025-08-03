@@ -74,7 +74,7 @@ string_to_number:
     xor bx, bx                     ; index
 
 string_loop:
-    mov dl, Input_buffer[bx + 2]
+    mov dl, Input_buffer[bx + 2]   ; get char
     cmp dl, '0'
     jl string_error
     cmp dl, '9'
@@ -132,7 +132,7 @@ sum_array:
     xor ax, ax
 
 sum_loop:
-    mov al, Num_array[bx]
+    mov al, Num_array[bx]        
     add ah, al
     inc bx
     cmp bx, 10

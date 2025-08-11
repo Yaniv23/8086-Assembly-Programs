@@ -237,7 +237,7 @@ print_number:
 
 convert_loop:
     xor dx, dx
-    div bx
+    div bx      ; Divide AX by 10
     add dl, '0'
     push dx
     inc si

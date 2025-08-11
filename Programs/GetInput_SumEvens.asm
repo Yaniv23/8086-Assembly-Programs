@@ -40,7 +40,7 @@ input_loop:
     ; Convert input string to number in AX
     call string_to_number
 
-    ; Validate number range (0–254)
+    ; Validate number range (0–255)
     cmp ax, 0
     jb not_count
     cmp ax, 255
@@ -132,8 +132,8 @@ sum_array:
     xor ax, ax
 
 sum_loop:
-    mov al, Num_array[bx]        
-    add ah, al
+    mov al, Num_array[bx]
+    add ah, al                     ; use one register for sum
     inc bx
     cmp bx, 10
     jl sum_loop
@@ -148,13 +148,13 @@ sum_loop:
 print_number:
     push ax
     mov al, bh
-    mov cx, 0
-    mov bx, 10
+    mov cx, 0                      ; digit count
+    mov bx, 10                     ; divisor
     xor ah, ah
 
 convert_loop:
     xor dx, dx
-    div bx
+    div bx                         ; Divide AX by 10, AX = quotient, DX = remainder
     add dl, '0'
     push dx
     inc cx
@@ -165,7 +165,7 @@ print_loop:
     pop dx
     mov ah, 02h
     int 21h
-    loop print_loop
+    loop print_loop                ; Decrement CX and loop if not zero
 
     pop ax
     ret

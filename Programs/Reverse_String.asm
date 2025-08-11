@@ -43,7 +43,7 @@ start:
     lea     si, Input_buffer + 2    ; SI = start of input
     mov     bx, si                  ; BX = start pointer
     lea     di, Input_buffer + 2
-    add     di, cx                  ; DI → one past last char
+    add     di, cx                  ; DI → one past last char ('$')
     dec     di                      ; DI = end pointer
 
 reverse_loop:
